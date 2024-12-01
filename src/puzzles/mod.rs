@@ -1,10 +1,13 @@
 use std::{
     error::Error,
     fmt,
-    fs::File,
-    io::{BufRead, BufReader, Lines},
+    fs::{self, File},
+    io::{BufRead, BufReader, Lines, Write},
+    path::Path,
     time::{Duration, Instant},
 };
+
+use reqwest::blocking::Client;
 
 pub mod day_01;
 
@@ -106,4 +109,31 @@ fn run_puzzle(
     let duration = start.elapsed();
 
     Ok(PuzzleResult { duration, answer })
+}
+
+pub fn download_input_file(day: u8) -> Result<(), Box<dyn Error>> {
+    let token = std::fs::read_to_string(".token")?.trim().to_string();
+    let url = format!("https://adventofcode.com/2024/day/{}/input", day);
+    let client = Client::new();
+    let response = client
+        .get(url)
+        .header("Cookie", format!("session={}", token))
+        .send()?;
+    if !response.status().is_success() {
+        return Err(format!("Request failed with status code {}", response.status()).into());
+    }
+    let content = response.text()?;
+    fs::create_dir_all("src/inputs")?;
+
+    let file_path = Path::new("src/inputs").join(format!("day_{:02}.txt", day));
+    let mut file = File::create(file_path)?;
+    file.write_all(content.as_bytes())?;
+
+    println!(
+        "Downloaded src/inputs/day_{:02}.txt with {} lines",
+        day,
+        content.lines().count()
+    );
+
+    Ok(())
 }

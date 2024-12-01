@@ -37,6 +37,18 @@ fn main() {
                 }
             }
         }
+        3 => match args[1].as_str() {
+            "download" => {
+                let day = args[2].parse::<u8>().unwrap();
+                puzzles::download_input_file(day).unwrap();
+            }
+            _ => {
+                eprintln!("Usage:");
+                eprintln!("  advent_of_code            # Run all puzzles");
+                eprintln!("  advent_of_code <day>      # Run specific day");
+                eprintln!("  advent_of_code download <day>  # Download input file for day");
+            }
+        },
         _ => {
             eprintln!("Usage:");
             eprintln!("  advent_of_code            # Run all puzzles");
