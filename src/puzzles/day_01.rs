@@ -29,21 +29,20 @@ pub fn solve_a(lines: Lines<BufReader<File>>) -> Option<String> {
 }
 
 pub fn solve_b(lines: Lines<BufReader<File>>) -> Option<String> {
-    let rows = lines
+    let mut second_column_map: HashMap<i32, i32> = HashMap::new();
+    let total_distance: i32 = lines
         .map(|line| {
-            line.unwrap()
+            let row = line
+                .unwrap()
                 .split_whitespace()
                 .map(|s| s.parse::<i32>().unwrap())
-                .collect::<Vec<i32>>()
+                .collect::<Vec<i32>>();
+
+            *second_column_map.entry(row[1]).or_insert(0) += 1;
+
+            row
         })
-        .collect::<Vec<Vec<i32>>>();
-
-    let mut second_column_map: HashMap<i32, i32> = HashMap::new();
-    for row in &rows {
-        *second_column_map.entry(row[1]).or_insert(0) += 1;
-    }
-
-    let total_distance: i32 = rows
+        .collect::<Vec<Vec<i32>>>()
         .iter()
         .map(|row| row[0] * *second_column_map.get(&row[0]).unwrap_or(&0))
         .sum();
