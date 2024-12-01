@@ -45,10 +45,7 @@ pub fn solve_b(lines: Lines<BufReader<File>>) -> Option<String> {
 
     let total_distance: i32 = rows
         .iter()
-        .map(|row| {
-            let value = *second_column_map.get(&row[0]).unwrap_or(&0);
-            row[0] * value
-        })
+        .map(|row| row[0] * *second_column_map.get(&row[0]).unwrap_or(&0))
         .sum();
 
     Some(total_distance.to_string())
