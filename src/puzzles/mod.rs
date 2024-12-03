@@ -10,6 +10,8 @@ use std::{
 use reqwest::blocking::Client;
 
 pub mod day_01;
+pub mod day_02;
+pub mod day_03;
 
 fn human_readable_duration(duration: Duration) -> String {
     let total_seconds = duration.as_secs();
@@ -86,10 +88,14 @@ impl fmt::Display for PuzzleResult {
     }
 }
 
-pub fn run_day(day: &str) -> Result<PuzzleResult, Box<dyn Error>> {
+pub fn run_day(day: &str, test: bool) -> Result<PuzzleResult, Box<dyn Error>> {
     match day {
-        "1a" => run_puzzle(day_01::solve_a, "day_01_a.txt"),
-        "1b" => run_puzzle(day_01::solve_b, "day_01_a.txt"),
+        "1a" => run_puzzle(day_01::solve_a, "day_01.txt", test),
+        "1b" => run_puzzle(day_01::solve_b, "day_01.txt", test),
+        "2a" => run_puzzle(day_02::solve_a, "day_02.txt", test),
+        "2b" => run_puzzle(day_02::solve_b, "day_02.txt", test),
+        "3a" => run_puzzle(day_03::solve_a, "day_03.txt", test),
+        "3b" => run_puzzle(day_03::solve_b, "day_03.txt", test),
         _ => Err(format!("No solution implemented for day {}", day).into()),
     }
 }
@@ -97,8 +103,12 @@ pub fn run_day(day: &str) -> Result<PuzzleResult, Box<dyn Error>> {
 fn run_puzzle(
     solve: fn(Lines<BufReader<File>>) -> Option<String>,
     input_file: &str,
+    test: bool,
 ) -> Result<PuzzleResult, Box<dyn Error>> {
-    let input_path = format!("src/inputs/{}", input_file);
+    let mut input_path = format!("src/inputs/{}", input_file);
+    if test {
+        input_path = input_path.replace(".txt", "_test.txt");
+    }
     let file: File = File::open(&input_path)
         .map_err(|e| format!("Error opening file '{}': {}", input_path, e))?;
 
